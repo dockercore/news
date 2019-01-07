@@ -1,9 +1,10 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	"quickstart/models"
+	"news/models"
 )
 
 type MainController struct {
@@ -87,5 +88,33 @@ func (c *MainController) HandleLogin() {
 
 func (c *MainController) ShowIndex() {
 	c.TplName = "index.html"
+
+}
+func (c *MainController) ShowAdd() {
+	c.TplName = "add.html"
+
+	}
+
+func (c *MainController) HandleAdd() {
+	//1.拿到数据
+	artiName := c.GetString("articleName")
+	Acontent := c.GetString("content")
+
+	//文件上传
+	f,h,err := c.GetFile("uploadname")
+	defer  f.Close()
+
+	if err != nil {
+		fmt.Println("GetFile err",err)
+	}else {
+		c.SaveToFile("uploadname", "./static/img/" + h.Filename)
+	}
+
+	//2.判断数据
+	if Acontent == "" || artiName == "" {
+		beego.Info("添加文章错误")
+		return
+	}
+	c.Ctx.WriteString("添加文章成功哈")
 
 }

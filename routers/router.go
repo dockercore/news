@@ -10,6 +10,8 @@ func init() {
 	beego.Router("/reg", &controllers.MainController{})
 	beego.Router("/login", &controllers.MainController{},"get:Showlogin;post:HandleLogin")
 	beego.Router("/index", &controllers.MainController{},"get:ShowIndex")
+	beego.Router("/addArtacle", &controllers.MainController{},"get:ShowAdd;post:HandleAdd")
+
 
 
 
