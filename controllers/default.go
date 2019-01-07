@@ -40,7 +40,9 @@ if userName  == ""|| pwd == ""  {
 		 c.Redirect("/reg", 302)
 		 return
 	 }
-     c.Ctx.WriteString("插入成功")
+    // c.Ctx.WriteString("插入成功")******************************************
+	c.Redirect("/login.html", 302)
+
 
 }
 
@@ -76,7 +78,9 @@ func (c *MainController) HandleLogin() {
 		return
 	}
 
-	c.Ctx.WriteString("登录成功")
+//	c.Ctx.WriteString("登录成功")
+	c.Redirect("/index", 302)
+
 
 
 }
