@@ -80,3 +80,8 @@ func (c *MainController) HandleLogin() {
 
 
 }
+
+func (c *MainController) ShowIndex() {
+	c.TplName = "index.html"
+
+}
