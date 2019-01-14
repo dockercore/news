@@ -202,8 +202,8 @@ func (c *MainController) HandleAdd(){
 		beego.Info("插入数据失败")
 		return
 	}
-	c.Ctx.WriteString("添加文章成功")
-
+	//c.Ctx.WriteString("添加文章成功")
+c.Redirect("/index",302)
 
 }
 
