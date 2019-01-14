@@ -30,7 +30,7 @@ type Article struct {
 
 func init()  {
 	//设置数据库的基本信息
-	orm.RegisterDataBase("default","mysql","root:root@tcp(127.0.0.1:3306)/test5?charset=utf8")
+	orm.RegisterDataBase("default","mysql","root:123@tcp(127.0.0.1:3306)/test5?charset=utf8")
 	//映射modle数据
 	orm.RegisterModel(new(User),new(Article))
 	//生成表
