@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>添加文章内容</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/reset.css">
+    <title>更新文章内容</title>
+     <link rel="stylesheet" type="text/css" href="/static/css/reset.css">
     <link rel="stylesheet" type="text/css" href="/static/css/main.css">
 </head>
 <body>
-   <div class="header">
+    <div class="header">
         <a href="#" class="logo fl"><img src="/static/img/logo.png" alt="logo"></a>
         <a href="#" class="logout fr">退 出</a>
     </div>
@@ -30,38 +30,35 @@
 
     <div class="main_body" id="main_body">
         <div class="breadcrub">
-            当前位置：文章管理>添加文章
+            当前位置：文章管理>编辑文章
         </div>
         <div class="pannel">
-            <form method="post" action="/addArticle" enctype="multipart/form-data">
-            <h3 class="review_title">添加文章</h3>
+            <form name = logon method = "post" enctype="multipart/form-data" action="/update">
+            <h3 class="review_title">编辑文章</h3>
             <div class="form_group">
                 <label>文章标题：</label>
-                <input type="text" class="input_txt2" name="articleName" >
-            </div>
-            <div class="form_group">
-                <label>文章类型：</label>
-                <select class="sel_opt" name="select">
-                    <option value="1">体育新闻</option>
-                    <option value="2">财经新闻</option>
-                    <option value="3">科技新闻</option>
-                </select>
+                <input type="text" class="input_txt2" name = "articleName" value="{{.article.ArtiName}}">
             </div>
             <div class="form_group">
                 <label>文章内容：</label>
-                <textarea class="input_multxt" name="content"></textarea>
+                <textarea class="input_multxt" name="content">{{.article.Acontent}}</textarea></textarea>
             </div>
             <div class="form_group">
                 <label>上传图片：</label>
-                <input type="file" class="input_file"  name="uploadname">
+                <img width="50px" height="50px" src="{{.article.Aimg}}">
+                <input type="file" name="uploadname" class="input_file">
             </div>
+            <input name="id" value="{{.article.Id}}" hidden="hidden">
             <div class="form_group indent_group line_top">
                 <input type="submit" value="添 加" class="confirm">
                 <span>{{.errmsg}}</span>
             </div>
-        </form>            
-        </div>    
-</div>
+        </form>
+            
+        </div>
+
+    </div>
+
 
 </body>
 </html>
