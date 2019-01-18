@@ -13,6 +13,7 @@ type User struct {
 	//Age string
 
 	Article []*Article `orm:"rel(m2m)"`
+
 }
 
 type Article struct {
@@ -22,8 +23,19 @@ type Article struct {
 	Acount int `orm:"default(0);null"`
 	Acontent string
 	Aimg string
+	ArticleType *ArticleType `orm:"rel(fk)"`
 
 	User []*User `orm:"reverse(many)"`
+
+
+}
+
+//类型表
+type ArticleType struct {
+	Id int
+	Tname string
+	Article []*Article `orm:"reverse(many)"`     //1
+
 }
 
 
@@ -32,7 +44,7 @@ func init()  {
 	//设置数据库的基本信息
 	orm.RegisterDataBase("default","mysql","root:123@tcp(127.0.0.1:3306)/test5?charset=utf8")
 	//映射modle数据
-	orm.RegisterModel(new(User),new(Article))
+	orm.RegisterModel(new(User),new(Article),new(ArticleType))
 	//生成表
 	orm.RunSyncdb("default",false,true)
 }

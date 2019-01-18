@@ -42,9 +42,9 @@
             <div class="form_group">
                 <label>文章类型：</label>
                 <select class="sel_opt" name="select">
-                    <option value="1">体育新闻</option>
-                    <option value="2">财经新闻</option>
-                    <option value="3">科技新闻</option>
+                    {{range .articleType}}
+                      <option value="{{.Id}}">{{.Tname}}</option>
+                    {{end}}
                 </select>
             </div>
             <div class="form_group">

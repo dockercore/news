@@ -90,6 +90,10 @@ func (c *MainController) ShowIndex()  {
 	//orm 查询
 	o := orm.NewOrm()
 
+	id,_ := c.GetInt("select")
+	beego.Info("id=",id)
+	//beego.Info("typename=",typeName)
+
 	qs := o.QueryTable("Article")
 	var articles []models.Article
 	/*_,err :=qs.All(&articles)
@@ -98,7 +102,12 @@ func (c *MainController) ShowIndex()  {
 		return
 	}*/
 	//查询有多少数据
-	count,err := qs.Count()
+	var count int64
+	count,err := qs.RelatedSel("ArticleType").Count()
+	if id != 0 && id != 2{
+		count,err = qs.RelatedSel("ArticleType").Filter("ArticleType__Id",id).Count()
+	}
+
 	if err != nil{
 		beego.Info("查询错误")
 		return
@@ -115,7 +124,13 @@ func (c *MainController) ShowIndex()  {
 	}
     start:= pageSize*(pageIndex -1)
     //1.参数pagesize 一页显示多少 2start 起始位置
-    qs.Limit(pageSize,start).All(&articles)
+    //select * from article where  ArticleType__Id = id limit
+    if id == 0 || id == 2{
+    	qs.Limit(pageSize,start).RelatedSel("ArticleType").All(&articles)
+	}else{
+		qs.Limit(pageSize,start).RelatedSel("ArticleType").Filter("ArticleType__Id",id).All(&articles)
+	}
+
 
     //判断首页是否=1和末页是否=pagecount
     FirstPage := false
@@ -128,17 +143,36 @@ func (c *MainController) ShowIndex()  {
 		LastPage = true
 	}
 
+	//获取类型数据
+	var artiTypes []models.ArticleType
+	_,err = o.QueryTable("ArticleType").All(&artiTypes)
+	if err != nil{
+		beego.Info("获取类型错误")
+		return
+	}
+	c.Data["articleType"] =artiTypes
     c.Data["FirstPage"] = FirstPage
     c.Data["LastPage"] = LastPage
     c.Data["pageIndex"] = pageIndex
     c.Data["pageCount"] = pageCount
     c.Data["count"] = count
 	c.Data["articles"] =articles
+	//文章Id
+	c.Data["typeid"] = id
 	c.TplName = "index.html"
 }
 
 //文章添加get:showAdd;post:HandleAdd
 func (c *MainController) ShowAdd() {
+    o := orm.NewOrm()
+	//获取类型数据
+	var artiTypes []models.ArticleType
+	_,err := o.QueryTable("ArticleType").All(&artiTypes)
+	if err != nil{
+		beego.Info("获取类型错误")
+		return
+	}
+	c.Data["articleType"] =artiTypes
 
 	c.TplName = "add.html"
 }
@@ -189,12 +223,16 @@ func (c *MainController) HandleAdd(){
 	arti.Aimg = "/static/img/"+filename
 	//c.Ctx.WriteString("添加文章成功")
 
+	//给文章添加类别
 	id,err := c.GetInt("select")
-	beego.Info("type=",id)
+	if err != nil{
+		beego.Info("插入数据失败")
+		return
+	}
+	artiType :=models.ArticleType{Id:id}
+	o.Read(&artiType)
 
-
-
-
+	arti.ArticleType = &artiType
 
 
 	_,err = o.Insert(&arti)
@@ -202,7 +240,8 @@ func (c *MainController) HandleAdd(){
 		beego.Info("插入数据失败")
 		return
 	}
-	c.Ctx.WriteString("添加文章成功")
+	//c.Ctx.WriteString("添加文章成功")
+	c.Redirect("/index",302)
 
 
 }
@@ -224,6 +263,8 @@ func (c *MainController) ShowContent()  {
     	beego.Info("查询错误",err)
     	return
 	}
+
+	arti.Acount += 1
     //3.传递数据给视图
     c.Data["article"] = arti
     c.TplName = "content.html"
@@ -334,5 +375,41 @@ func (c *MainController) HandelDelete() {
 
 }
 
+//显示添加类型页面
+func (c *MainController)ShowAddType()  {
+  o := orm.NewOrm()
+  var artiTypes []models.ArticleType
+  _,err := o.QueryTable("ArticleType").All(&artiTypes)
+  if err != nil{
+  	 beego.Info("没有获取到类型数据")
+  }
+  c.Data["articleType"] = artiTypes
+
+  c.TplName = "addType.html"
+}
+
+//显示添加类型页面
+func (c *MainController)HandleAddType()  {
+	//c.TplName = "addType.html"
+	//1.获取内容
+	typeName := c.GetString("typeName")
+	//2.判断数据是否合法
+	if typeName == ""{
+		beego.Info("获取类型信息错误")
+		return
+	}
+
+	//3.写入数据
+	o := orm.NewOrm()
+	artiType := models.ArticleType{}
+	artiType.Tname = typeName
+    _,err := o.Insert(&artiType)
+    if err != nil{
+    	beego.Info("插入数据类型错误")
+    	return
+	}
+	//4.返回界面
+	c.Redirect("/addType",302)
+}
 
 
